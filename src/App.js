@@ -18,8 +18,7 @@ function App() {
         let nodes = xml.querySelector('ListBucketResult').querySelectorAll('Contents')
         let prevImages = [];
         nodes.forEach((el) => prevImages.push(el['childNodes'].item(0).innerHTML))
-        setIm(prevImages.slice())
-        console.log(im)
+        setIm(prevImages.slice().reverse())
       })
     }).catch(err => console.log(err))
   }, [])
@@ -41,7 +40,7 @@ function App() {
     document.getElementById('preview').src = URL.createObjectURL(blob);
   }
 
-  const go = (e) => {
+  const go = () => {
     if (document.getElementById('preview').src.includes('preview')) {
       alert('you are previewing you twat')
       return;
@@ -61,6 +60,15 @@ function App() {
     }
   }
 
+  const deleteImage = (e) => {
+    if (window.confirm('Delete this fine snip?')) {
+      const splat = e.target.src.split("/")
+      s3Client.deleteFile(splat[splat.length - 1])
+        .then(res => console.log(res))
+        .catch(err => console.log(err))
+    }
+  }
+
   return (
     <>
       <div className="container bg-gray-200 rounded-lg flex-auto mx-auto">
@@ -70,10 +78,13 @@ function App() {
       </div>
 
       <div className="container bg-gray-200 rounded-lg flex-auto mx-auto">
-        <h1 className="text-2xl mt-2 ml-2 font-gray-500">Your last 5 snips:</h1>
+        <h1 className="text-2xl mt-2 ml-2 font-gray-500">Your last 5 snips, click to delete:</h1>
         <div>
-          {im.map((i, k) => {
-            return <img className="mb-2 ml-2" key={k} alt={`prev image ${k}`} src={`${url}/${i}`} />
+          {im.slice(0, 5).map((i, k) => {
+            return <>
+              <img onClick={deleteImage} className="mb-2 ml-2" key={k} alt={`prev image ${k}`} src={`${url}/${i}`} />
+              <br />
+            </>
           })}
         </div>
       </div>
