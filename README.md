@@ -14,6 +14,8 @@ export const config = {
     accessKeyId: "access key",
     secretAccessKey: "secret key"
 }
+
+export const url = "your bucket URL without trailing /"
 ```
 
 run `npm run start` and you are done. Paste an image and click go baby.
